@@ -103,7 +103,7 @@ INSERT INTO messages (sender_id, recipient_id, title, content, is_read) VALUES
 (7, 2, 'Re: Regarding Your Application', 'Thank you for reaching out! I am very interested in this opportunity and available for an interview next week.', true),
 (3, 8, 'Interview Scheduled', 'Hi Bob, your interview for the Cloud Infrastructure Engineer position is scheduled for March 15th at 10:00 AM.', false),
 (4, 4, 'Congratulations', 'Hi David, we are pleased to offer you the position of Solutions Architect. Please review the offer letter attached.', false),
-(5, 11, 'Design Feedback', 'Emma, great work on the UI mockups. Let\'s schedule a design review meeting to discuss refinements.', true);
+(5, 11, 'Design Feedback', 'Emma, great work on the UI mockups. Let''s schedule a design review meeting to discuss refinements.', true);
 
 -- ==================== REVIEWS ====================
 
@@ -113,7 +113,7 @@ INSERT INTO reviews (company_id, job_seeker_id, reviewer_id, rating, comment) VA
 (NULL, 2, 2, 5, 'Bob is a fantastic developer with great communication skills. Highly professional.'),
 (3, NULL, 3, 5, 'DataVision is at the forefront of AI innovation. Proud to work here.'),
 (4, NULL, 4, 4, 'SecureNet has a strong security-first culture. Would recommend to others.'),
-(NULL, 5, 6, 5, 'Emma\'s design work is exceptional. Great attention to detail and user empathy.');
+(NULL, 5, 6, 5, 'Emma''s design work is exceptional. Great attention to detail and user empathy.');
 
 -- ==================== VERIFY DATA ====================
 
