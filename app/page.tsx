@@ -1,17 +1,35 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ROUTES } from '@/lib/utils/constants'
-import { Search, Briefcase, Users, TrendingUp, ArrowRight } from 'lucide-react'
+import { fetchVacancies } from '@/lib/api-client'
+import { Search, Briefcase, TrendingUp, Users, ArrowRight, Loader2 } from 'lucide-react'
 
 export default function HomePage() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
+  const [latestVacancies, setLatestVacancies] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchVacancies()
+        setLatestVacancies(data.slice(0, 4))
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,45 +45,45 @@ export default function HomePage() {
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section - Qwork style */}
-        <section className="py-16 sm:py-24 bg-white">
-          <div className="container max-w-7xl mx-auto px-4">
+        <section className="py-16 sm:py-24 bg-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50 rounded-full mix-blend-multiply filter blur-[120px] opacity-50 -translate-y-1/2 translate-x-1/3"></div>
+          
+          <div className="container max-w-7xl mx-auto px-4 relative z-10">
             <div className="flex flex-col lg:flex-row items-center gap-12">
               <div className="flex-1 text-center lg:text-left">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#222] mb-6 leading-tight">
-                  Маркетплейс <span className="text-[#11a36d]">фриланс-услуг</span> и вакансий
+                <h1 className="text-5xl sm:text-6xl font-black text-gray-900 mb-6 leading-tight tracking-tighter">
+                  Работа найдется <br/> <span className="text-primary">для каждого</span>
                 </h1>
-                <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto lg:mx-0">
-                  Найдите профессиональных исполнителей или идеальную работу в один клик. Проверенные компании и соискатели.
+                <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto lg:mx-0 font-medium">
+                  Лучший сервис для поиска работы и сотрудников. Прямые контакты, проверенные компании и тысячи актуальных вакансий.
                 </p>
 
-                {/* Search Bar */}
-                <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto lg:mx-0 shadow-xl rounded-lg overflow-hidden border border-gray-200">
+                <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto lg:mx-0 shadow-2xl shadow-blue-100 rounded-2xl overflow-hidden border border-gray-100">
                   <Input
                     type="text"
-                    placeholder="Какую работу вы ищете?"
+                    placeholder="Профессия, должность или компания"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-16 pl-6 pr-32 text-lg border-none focus-visible:ring-0 placeholder:text-gray-400"
+                    className="h-20 pl-8 pr-40 text-xl border-none focus-visible:ring-0 placeholder:text-gray-400 font-medium"
                   />
                   <Button 
                     type="submit" 
-                    className="absolute right-2 top-2 h-12 px-8 bg-[#11a36d] hover:bg-[#0e8a5c] text-white font-bold rounded"
+                    className="absolute right-3 top-3 h-14 px-10 bg-primary hover:bg-primary/90 text-white font-black rounded-xl text-lg shadow-lg shadow-primary/20"
                   >
                     Найти
                   </Button>
                 </form>
 
-                <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-3">
-                  <span className="text-sm text-gray-500 py-1">Популярно:</span>
-                  {['Дизайн', 'Разработка', 'Маркетинг', 'Тексты'].map(tag => (
+                <div className="mt-10 flex flex-wrap justify-center lg:justify-start gap-3">
+                  <span className="text-sm font-bold text-gray-400 py-1 uppercase tracking-widest">Часто ищут:</span>
+                  {['Дизайн', 'Продажи', 'Разработка', 'Маркетинг'].map(tag => (
                     <button 
                       key={tag}
                       onClick={() => {
                         setSearchQuery(tag)
                         router.push(`${ROUTES.VACANCIES}?search=${encodeURIComponent(tag)}`)
                       }}
-                      className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-gray-700 transition-colors"
+                      className="text-sm font-bold bg-gray-50 hover:bg-primary hover:text-white px-4 py-1.5 rounded-full text-gray-600 transition-all border border-gray-100"
                     >
                       {tag}
                     </button>
@@ -73,84 +91,51 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div className="hidden lg:block flex-1 relative h-[500px] w-full bg-[#f9f9f9] rounded-2xl overflow-hidden border border-gray-100">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Briefcase className="w-32 h-32 text-[#11a36d] opacity-20" />
+              <div className="hidden lg:block flex-1 relative h-[500px] w-full">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-[40px] shadow-2xl rotate-3 flex items-center justify-center overflow-hidden group">
+                  <Briefcase className="w-48 h-48 text-white/20 group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute bottom-8 left-8 text-white">
+                    <p className="text-4xl font-black mb-1">50 000+</p>
+                    <p className="text-white/80 font-bold uppercase tracking-widest text-xs">Активных вакансий</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Categories Section */}
-        <section className="py-16 bg-[#f2f2f2]">
-          <div className="container max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Популярные категории</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {[
-                { name: 'Дизайн', icon: '🎨' },
-                { name: 'IT и разработка', icon: '💻' },
-                { name: 'Маркетинг', icon: '📊' },
-                { name: 'Копирайтинг', icon: '✍️' },
-                { name: 'Переводы', icon: '🌍' },
-                { name: 'Аудио и видео', icon: '🎵' },
-              ].map(cat => (
-                <div key={cat.name} className="bg-white p-6 rounded-lg border border-gray-200 text-center hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="text-3xl mb-3">{cat.icon}</div>
-                  <div className="font-semibold text-gray-800">{cat.name}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Section */}
-        <section className="py-16 border-t border-gray-200">
-          <div className="container max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-4xl font-extrabold text-[#11a36d] mb-2">50 000+</div>
-                <p className="text-gray-600 font-medium uppercase tracking-wider text-sm">Активных вакансий</p>
+        <section className="py-20 bg-gray-50 border-y border-gray-100">
+          <div className="container max-w-7xl mx-auto px-4 text-center">
+            <h2 className="text-3xl font-black text-gray-900 mb-12 tracking-tight">Свежие вакансии</h2>
+            
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
               </div>
-              <div>
-                <div className="text-4xl font-extrabold text-[#11a36d] mb-2">10 000+</div>
-                <p className="text-gray-600 font-medium uppercase tracking-wider text-sm">Проверенных компаний</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {latestVacancies.map(vacancy => (
+                  <Link 
+                    key={vacancy.id} 
+                    href={ROUTES.VACANCY_DETAIL(vacancy.id.toString())}
+                    className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-primary hover:shadow-xl transition-all text-left group"
+                  >
+                    <h3 className="font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-1">{vacancy.title}</h3>
+                    <p className="text-sm text-gray-500 mb-4 line-clamp-1">{vacancy.company_name}</p>
+                    <p className="text-lg font-black text-gray-900">{vacancy.salary_min || 0} ₽</p>
+                  </Link>
+                ))}
               </div>
-              <div>
-                <div className="text-4xl font-extrabold text-[#11a36d] mb-2">100 000+</div>
-                <p className="text-gray-600 font-medium uppercase tracking-wider text-sm">Специалистов</p>
-              </div>
-            </div>
+            )}
+            
+            <Button 
+              onClick={() => router.push(ROUTES.VACANCIES)}
+              variant="outline" 
+              className="mt-12 h-14 px-10 rounded-xl border-2 font-black text-primary hover:bg-primary hover:text-white transition-all"
+            >
+              Смотреть все вакансии <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
           </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-20 bg-[#11a36d] text-white overflow-hidden relative">
-          <div className="container max-w-7xl mx-auto px-4 text-center relative z-10">
-            <h2 className="text-4xl font-bold mb-6 text-balance">Готовы изменить свою карьеру?</h2>
-            <p className="text-xl mb-10 text-white/90 max-w-3xl mx-auto">
-              Присоединяйтесь к сообществу профессионалов и находите лучшие предложения на рынке труда прямо сейчас.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                onClick={() => router.push(ROUTES.REGISTER)}
-                className="bg-white text-[#11a36d] hover:bg-gray-100 font-bold px-10 h-14 text-lg"
-              >
-                Создать аккаунт
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => router.push(ROUTES.VACANCIES)}
-                className="border-2 border-white text-white hover:bg-white/10 font-bold px-10 h-14 text-lg"
-              >
-                Найти работу
-              </Button>
-            </div>
-          </div>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
         </section>
       </main>
 

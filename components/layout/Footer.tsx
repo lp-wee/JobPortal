@@ -6,81 +6,32 @@ import { ROUTES } from '@/lib/utils/constants'
 export function Footer() {
   const currentYear = new Date().getFullYear()
 
-  const sections = [
-    {
-      title: 'Для соискателей',
-      links: [
-        { label: 'Все вакансии', href: ROUTES.VACANCIES },
-        { label: 'Кабинет', href: ROUTES.CABINET_DASHBOARD },
-        { label: 'Мои резюме', href: ROUTES.CABINET_RESUMES },
-        { label: 'Советы по поиску', href: '#' },
-      ],
-    },
-    {
-      title: 'Для работодателей',
-      links: [
-        { label: 'Разместить вакансию', href: ROUTES.EMPLOYER_VACANCY_NEW },
-        { label: 'Поиск резюме', href: ROUTES.EMPLOYER_RESUMES },
-        { label: 'Тарифы', href: '#' },
-        { label: 'Помощь', href: '#' },
-      ],
-    },
-    {
-      title: 'О проекте',
-      links: [
-        { label: 'О нас', href: '#' },
-        { label: 'Контакты', href: '#' },
-        { label: 'Правила сервиса', href: '#' },
-        { label: 'Конфиденциальность', href: '#' },
-      ],
-    },
-  ]
-
   return (
-    <footer className="bg-[#222] text-white pt-16 pb-8 border-t border-gray-800">
+    <footer className="bg-white border-t border-gray-100 py-6">
       <div className="container max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Logo & Info */}
-          <div className="space-y-6">
-            <Link href={ROUTES.HOME} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded bg-[#11a36d] flex items-center justify-center text-white">
-                <span className="font-bold">JP</span>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-8">
+            <Link href={ROUTES.HOME} className="flex items-center gap-2 group">
+              <div className="w-5 h-5 rounded bg-primary flex items-center justify-center text-white text-[8px] font-black transition-transform group-hover:scale-110">
+                JP
               </div>
-              <span className="font-bold text-xl tracking-tight">JobPortal</span>
+              <span className="font-black text-xs tracking-tighter text-gray-900 uppercase">JobPortal</span>
             </Link>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Современная платформа для поиска работы и сотрудников в России. Мы делаем процесс найма проще и быстрее.
-            </p>
+            <nav className="flex gap-6">
+              <Link href={ROUTES.VACANCIES} className="text-[10px] font-bold text-gray-400 hover:text-primary transition-colors uppercase tracking-widest">Вакансии</Link>
+              <Link href={ROUTES.VACANCIES} className="text-[10px] font-bold text-gray-400 hover:text-primary transition-colors uppercase tracking-widest">Компании</Link>
+              <Link href="#" className="text-[10px] font-bold text-gray-400 hover:text-primary transition-colors uppercase tracking-widest">Помощь</Link>
+            </nav>
           </div>
-
-          {/* Links Sections */}
-          {sections.map((section) => (
-            <div key={section.title}>
-              <h3 className="font-bold text-white mb-6 uppercase tracking-wider text-xs">
-                {section.title}
-              </h3>
-              <ul className="space-y-4">
-                {section.links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-gray-400 hover:text-[#11a36d] transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+          
+          <div className="flex items-center gap-8">
+            <div className="flex gap-4">
+              <Link href="#" className="text-gray-300 hover:text-primary transition-colors text-[9px] font-black uppercase tracking-tighter">VKontakte</Link>
+              <Link href="#" className="text-gray-300 hover:text-primary transition-colors text-[9px] font-black uppercase tracking-tighter">Telegram</Link>
             </div>
-          ))}
-        </div>
-
-        <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-          <p>© {currentYear} JobPortal. Все права защищены.</p>
-          <div className="flex gap-6">
-            <Link href="#" className="hover:text-white transition-colors">ВКонтакте</Link>
-            <Link href="#" className="hover:text-white transition-colors">Telegram</Link>
-            <Link href="#" className="hover:text-white transition-colors">Дзен</Link>
+            <p className="text-[9px] font-bold text-gray-300 uppercase tracking-[0.2em]">
+              © {currentYear} • Все права защищены
+            </p>
           </div>
         </div>
       </div>
