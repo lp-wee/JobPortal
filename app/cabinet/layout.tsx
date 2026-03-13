@@ -9,7 +9,12 @@ import { MobileMenuToggle } from '@/components/layout/MobileMenuToggle'
 
 export default function CabinetLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const { isAuthenticated, user } = useAuth()
+  const { isAuthenticated, isInitialized } = useAuth()
+
+  // Don't redirect until auth is initialized
+  if (!isInitialized) {
+    return null
+  }
 
   // Redirect if not authenticated
   if (!isAuthenticated) {

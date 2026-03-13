@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
@@ -12,23 +12,26 @@ import { ROUTES } from '@/lib/utils/constants'
 import { fetchCompany, fetchVacancies } from '@/lib/api-client'
 import { MapPin, Globe, Users, Star, ArrowLeft, Briefcase, Loader2 } from 'lucide-react'
 
-export default function CompanyProfilePage({ params }: { params: { id: string } }) {
+export default function CompanyProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
+  const resolvedParams = use(params)
+  const id = resolvedParams.id
   const [company, setCompany] = useState<any>(null)
   const [vacancies, setVacancies] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!id || id === 'undefined') return
     const load = async () => {
       try {
-        const id = parseInt(params.id)
+        const companyId = parseInt(id)
         const [companyData, allVacancies] = await Promise.all([
-          fetchCompany(id),
+          fetchCompany(companyId),
           fetchVacancies()
         ])
         setCompany(companyData)
         // Filter vacancies for this company locally for now as there's no specific company-vacancies endpoint yet
-        setVacancies(allVacancies.filter((v: any) => v.company_id === id))
+        setVacancies(allVacancies.filter((v: any) => v.company_id === companyId))
       } catch (e) {
         console.error(e)
       } finally {
@@ -36,7 +39,7 @@ export default function CompanyProfilePage({ params }: { params: { id: string } 
       }
     }
     load()
-  }, [params.id])
+  }, [id])
 
   if (loading) {
     return (

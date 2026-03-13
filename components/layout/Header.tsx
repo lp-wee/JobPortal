@@ -33,17 +33,17 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
-      <div className="container max-w-7xl mx-auto px-4">
-        <div className="flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-8">
-            <Link href={ROUTES.HOME} className="flex items-center gap-2 group">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="flex h-14 sm:h-16 items-center justify-between gap-4">
+          <div className="flex items-center gap-6 md:gap-8">
+            <Link href={ROUTES.HOME} className="flex items-center gap-2 group flex-shrink-0">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white transition-transform group-hover:rotate-6">
                 <Briefcase className="w-5 h-5" />
               </div>
-              <span className="font-black text-xl tracking-tighter text-gray-900">JobPortal</span>
+              <span className="font-black text-lg sm:text-xl tracking-tighter text-gray-900 hidden sm:inline">JobPortal</span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-6 md:gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}

@@ -4,35 +4,32 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { mockResumes, mockApplications, mockVacancies, mockJobSeekers } from '@/lib/mock-data'
 import { ROUTES } from '@/lib/utils/constants'
 import { FileText, Send, Bookmark, Eye, TrendingUp, Clock } from 'lucide-react'
 
 export default function CabinetDashboardPage() {
   const { user } = useAuth()
-  const userResumes = user ? mockResumes.filter((r) => r.user_id === user.id) : []
-  const userApplications = user ? mockApplications.filter((a) => a.user_id === user.id) : []
-  const userJobSeeker = mockJobSeekers[0]
+  const userResumes: any[] = []
+  const userApplications: any[] = []
 
   const applicationStats = {
-    pending: userApplications.filter((a) => a.status === 'pending').length,
-    reviewing: userApplications.filter((a) => a.status === 'reviewing').length,
-    accepted: userApplications.filter((a) => a.status === 'accepted').length,
+    pending: 0,
+    reviewing: 0,
+    accepted: 0,
   }
 
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
       <div>
-        <h1 className="text-3xl font-bold mb-2">Welcome back, {userJobSeeker?.first_name}!</h1>
+        <h1 className="text-3xl font-bold mb-2">Welcome back!</h1>
         <p className="text-muted-foreground">
           Manage your job applications and career development
         </p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -178,7 +175,7 @@ export default function CabinetDashboardPage() {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
               <Link href={ROUTES.VACANCIES}>
                 <Button variant="outline" className="w-full">
                   <Eye className="w-4 h-4 mr-2" />
@@ -206,25 +203,18 @@ export default function CabinetDashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Recommended Jobs */}
+        {/* Browse Jobs */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Recommended for You</CardTitle>
+            <CardTitle>Browse Opportunities</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {mockVacancies.slice(0, 3).map((vacancy) => (
-                <Link key={vacancy.id} href={ROUTES.VACANCY_DETAIL(vacancy.id)}>
-                  <div className="p-3 rounded-lg border border-border hover:border-primary transition-colors cursor-pointer">
-                    <h4 className="font-semibold text-sm mb-1">{vacancy.title}</h4>
-                    <p className="text-xs text-muted-foreground">{vacancy.location}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <Link href={ROUTES.VACANCIES} className="mt-4 block">
-              <Button variant="outline" className="w-full">
-                See All Recommendations
+            <p className="text-sm text-muted-foreground mb-4">
+              Start exploring job opportunities that match your profile
+            </p>
+            <Link href={ROUTES.VACANCIES} className="block">
+              <Button className="w-full">
+                Browse All Jobs
               </Button>
             </Link>
           </CardContent>

@@ -22,6 +22,7 @@ export default function RegisterPage() {
     confirm_password: '',
     first_name: '',
     last_name: '',
+    company_name: '',
     phone: '',
     role: 'job_seeker' as const,
   })
@@ -45,11 +46,27 @@ export default function RegisterPage() {
       setPasswordError('Пароль должен содержать минимум 8 символов')
       return
     }
+
     try {
-      await register(formData.email, formData.password, formData.first_name, formData.last_name, formData.role, formData.phone || undefined)
+      // For job seekers, use first_name and last_name
+      // For employers, use company_name as both first_name and last_name
+      const first_name = formData.role === 'job_seeker' ? formData.first_name : formData.company_name
+      const last_name = formData.role === 'job_seeker' ? formData.last_name : ''
+
+      await register(
+        formData.email,
+        formData.password,
+        first_name,
+        last_name,
+        formData.role,
+        formData.phone || undefined
+      )
       const redirectUrl = formData.role === 'job_seeker' ? ROUTES.CABINET_DASHBOARD : ROUTES.EMPLOYER_DASHBOARD
       router.push(redirectUrl)
-    } catch {}
+    } catch (err) {
+      console.error('[Register] Error:', err)
+      // Error is handled by useAuth hook and displayed in UI
+    }
   }
 
   return (
@@ -105,32 +122,51 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="space-y-5">
-                    <Label className="text-sm font-black text-gray-700 uppercase tracking-wider ml-1">Личные данные</Label>
+                    <Label className="text-sm font-black text-gray-700 uppercase tracking-wider ml-1">
+                      {formData.role === 'job_seeker' ? 'Личные данные' : 'Данные компании'}
+                    </Label>
                     <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Input
-                          id="first_name"
-                          name="first_name"
-                          placeholder="Ваше имя"
-                          className="h-14 border-gray-200 rounded-xl px-5 font-medium"
-                          value={formData.first_name}
-                          onChange={handleChange}
-                          required
-                          disabled={isLoading}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Input
-                          id="last_name"
-                          name="last_name"
-                          placeholder="Ваша фамилия"
-                          className="h-14 border-gray-200 rounded-xl px-5 font-medium"
-                          value={formData.last_name}
-                          onChange={handleChange}
-                          required
-                          disabled={isLoading}
-                        />
-                      </div>
+                      {formData.role === 'job_seeker' ? (
+                        <>
+                          <div className="space-y-2">
+                            <Input
+                              id="first_name"
+                              name="first_name"
+                              placeholder="Ваше имя"
+                              className="h-14 border-gray-200 rounded-xl px-5 font-medium"
+                              value={formData.first_name}
+                              onChange={handleChange}
+                              required
+                              disabled={isLoading}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Input
+                              id="last_name"
+                              name="last_name"
+                              placeholder="Ваша фамилия"
+                              className="h-14 border-gray-200 rounded-xl px-5 font-medium"
+                              value={formData.last_name}
+                              onChange={handleChange}
+                              required
+                              disabled={isLoading}
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <div className="space-y-2">
+                          <Input
+                            id="company_name"
+                            name="company_name"
+                            placeholder="Название вашей компании"
+                            className="h-14 border-gray-200 rounded-xl px-5 font-medium"
+                            value={formData.company_name}
+                            onChange={handleChange}
+                            required
+                            disabled={isLoading}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

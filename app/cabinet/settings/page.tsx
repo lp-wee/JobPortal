@@ -6,18 +6,16 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { mockJobSeekers } from '@/lib/mock-data'
 
 export default function SettingsPage() {
   const { user, logout } = useAuth()
-  const userProfile = mockJobSeekers[0]
   const [formData, setFormData] = useState({
-    first_name: userProfile?.first_name || '',
-    last_name: userProfile?.last_name || '',
+    first_name: '',
+    last_name: '',
     email: user?.email || '',
-    phone: userProfile?.phone || '',
-    location: userProfile?.location || '',
-    bio: userProfile?.bio || '',
+    phone: '',
+    location: '',
+    bio: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

@@ -1,66 +1,38 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { mockApplications, mockVacancies, mockVacancies as allVacancies } from '@/lib/mock-data'
 import { Send } from 'lucide-react'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 export default function EmployerApplicationsPage() {
-  const companyVacancies = allVacancies.filter((v) => v.company_id === 'company-1')
-  const vacancyApplications = mockApplications.filter((a) =>
-    companyVacancies.some((v) => v.id === a.vacancy_id)
-  )
+  const vacancyApplications: any[] = []
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Applications</h1>
-        <p className="text-muted-foreground">Manage all applications for your vacancies</p>
+        <h1 className="text-3xl font-bold">Applications</h1>
+        <p className="text-muted-foreground mt-2">Manage all applications for your vacancies</p>
       </div>
 
       {vacancyApplications.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <Send className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <p className="text-muted-foreground mb-4">No applications yet</p>
-            <Button variant="outline">Post a Job</Button>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Send}
+          title="No applications yet"
+          description="Applications from candidates will appear here once you post a job"
+        />
       ) : (
         <div className="space-y-4">
-          {vacancyApplications.map((app) => {
-            const vacancy = mockVacancies.find((v) => v.id === app.vacancy_id)
-            return (
-              <Card key={app.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold mb-2">Application for {vacancy?.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Applied {new Date(app.created_at).toLocaleDateString()}
-                      </p>
-                      {app.cover_letter && (
-                        <p className="text-sm mb-3 line-clamp-2">{app.cover_letter}</p>
-                      )}
-                      <Badge
-                        variant={app.status === 'accepted' ? 'default' : 'outline'}
-                        className="capitalize"
-                      >
-                        {app.status}
-                      </Badge>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        View Resume
-                      </Button>
-                      <Button size="sm">Reply</Button>
-                    </div>
+          {vacancyApplications.map((app: any) => (
+            <Card key={app.id}>
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="font-semibold mb-2">Application</h3>
                   </div>
-                </CardContent>
-              </Card>
-            )
-          })}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
     </div>

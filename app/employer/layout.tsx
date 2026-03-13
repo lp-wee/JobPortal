@@ -8,7 +8,12 @@ import { Sidebar } from '@/components/layout/Sidebar'
 
 export default function EmployerLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isInitialized } = useAuth()
+
+  // Don't redirect until auth is initialized
+  if (!isInitialized) {
+    return null
+  }
 
   // Redirect if not authenticated
   if (!isAuthenticated) {

@@ -6,23 +6,21 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { mockVacancies } from '@/lib/mock-data'
 import { ROUTES, EMPLOYMENT_TYPES, EXPERIENCE_LEVELS, CURRENCIES } from '@/lib/utils/constants'
 
 export default function EditVacancyPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const vacancy = mockVacancies.find((v) => v.id === params.id)
 
   const [formData, setFormData] = useState({
-    title: vacancy?.title || '',
-    description: vacancy?.description || '',
-    salary_min: vacancy?.salary_min?.toString() || '',
-    salary_max: vacancy?.salary_max?.toString() || '',
-    currency: vacancy?.currency || 'USD',
-    location: vacancy?.location || '',
-    employment_type: vacancy?.employment_type || '',
-    level: vacancy?.level || '',
-    deadline: vacancy?.deadline || '',
+    title: '',
+    description: '',
+    salary_min: '',
+    salary_max: '',
+    currency: 'USD',
+    location: '',
+    employment_type: '',
+    level: '',
+    deadline: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

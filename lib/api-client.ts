@@ -1,32 +1,123 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
 
 interface FetchOptions extends RequestInit {
   skipErrorHandling?: boolean
+  skipAuth?: boolean
+}
+
+// Get auth token from localStorage
+function getAuthToken(): string | null {
+  if (typeof window === 'undefined') return null
+  const auth = localStorage.getItem('auth')
+  if (!auth) return null
+  try {
+    const { access_token } = JSON.parse(auth)
+    return access_token || null
+  } catch {
+    return null
+  }
+}
+
+// Refresh token if needed
+async function refreshAuthToken(): Promise<boolean> {
+  try {
+    const auth = localStorage.getItem('auth')
+    if (!auth) return false
+    
+    const { refresh_token } = JSON.parse(auth)
+    if (!refresh_token) return false
+
+    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token }),
+    })
+
+    if (!response.ok) {
+      // Clear invalid auth
+      localStorage.removeItem('auth')
+      return false
+    }
+
+    const data = await response.json()
+    const { access_token, expires_in } = data
+
+    // Update stored token
+    const currentAuth = JSON.parse(auth)
+    localStorage.setItem(
+      'auth',
+      JSON.stringify({
+        ...currentAuth,
+        access_token,
+        expires_at: Date.now() + expires_in * 1000,
+      })
+    )
+
+    return true
+  } catch (error) {
+    console.error('[API] Token refresh failed:', error)
+    localStorage.removeItem('auth')
+    return false
+  }
 }
 
 async function apiFetch<T = any>(
   endpoint: string,
   options: FetchOptions = {}
 ): Promise<T> {
-  const { skipErrorHandling, ...fetchOptions } = options
+  const { skipErrorHandling, skipAuth, ...fetchOptions } = options
 
   const url = `${API_BASE_URL}${endpoint}`
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...fetchOptions.headers,
-      },
+    const headers = {
+      'Content-Type': 'application/json',
+      ...fetchOptions.headers,
+    } as Record<string, string>
+
+    // Add auth token if not skipped
+    if (!skipAuth) {
+      const token = getAuthToken()
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+    }
+
+    let response = await fetch(url, {
+      headers,
       ...fetchOptions,
     })
 
+    // If 401, try to refresh token once and retry
+    if (response.status === 401 && !skipAuth) {
+      const refreshed = await refreshAuthToken()
+      if (refreshed) {
+        const newToken = getAuthToken()
+        if (newToken) {
+          headers['Authorization'] = `Bearer ${newToken}`
+          response = await fetch(url, {
+            headers,
+            ...fetchOptions,
+          })
+        }
+      }
+    }
+
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: response.statusText }))
+      
+      // If still 401 after refresh, clear auth and let app handle redirect
+      if (response.status === 401) {
+        localStorage.removeItem('auth')
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login'
+        }
+      }
+
       if (!skipErrorHandling) {
         console.error(`[API Error] ${endpoint}:`, error)
       }
-      throw new Error(error.error || `API Error: ${response.statusText}`)
+      throw new Error(error.error || error.message || `API Error: ${response.statusText}`)
     }
 
     return response.json()
@@ -36,6 +127,49 @@ async function apiFetch<T = any>(
     }
     throw error
   }
+}
+
+// ==================== AUTHENTICATION ====================
+
+export async function registerUser(data: {
+  email: string
+  password: string
+  first_name: string
+  last_name: string
+  role: 'job_seeker' | 'employer' | 'admin'
+  phone?: string
+}) {
+  return apiFetch('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    skipAuth: true,
+  })
+}
+
+export async function loginUser(data: {
+  email: string
+  password: string
+  role: 'job_seeker' | 'employer' | 'admin'
+}) {
+  return apiFetch('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    skipAuth: true,
+  })
+}
+
+export async function logoutUser() {
+  try {
+    await apiFetch('/auth/logout', {
+      method: 'POST',
+    })
+  } finally {
+    localStorage.removeItem('auth')
+  }
+}
+
+export async function getCurrentUser() {
+  return apiFetch('/users/me')
 }
 
 // ==================== VACANCIES ====================

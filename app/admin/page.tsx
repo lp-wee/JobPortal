@@ -3,16 +3,15 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { mockVacancies, mockApplications, mockCompanies, mockJobSeekers } from '@/lib/mock-data'
 import { ROUTES } from '@/lib/utils/constants'
 import { Users, Briefcase, Send, TrendingUp } from 'lucide-react'
 
 export default function AdminDashboardPage() {
   const stats = {
-    totalUsers: mockJobSeekers.length + 2, // Simplified
-    totalCompanies: mockCompanies.length,
-    totalVacancies: mockVacancies.length,
-    totalApplications: mockApplications.length,
+    totalUsers: 0,
+    totalCompanies: 0,
+    totalVacancies: 0,
+    totalApplications: 0,
   }
 
   return (
@@ -24,7 +23,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -74,7 +73,7 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Quick Actions */}
         <Card>
           <CardHeader>

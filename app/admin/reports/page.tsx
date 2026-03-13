@@ -1,26 +1,25 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { mockVacancies, mockApplications, mockJobSeekers, mockCompanies } from '@/lib/mock-data'
 
 export default function AdminReportsPage() {
   const reportData = {
-    newUsersThisMonth: 12,
-    newJobsThisMonth: 8,
-    activeApplications: mockApplications.length,
-    totalRevenue: '$125,000',
-    conversionRate: '3.2%',
-    averageTimeToHire: '14 days',
+    newUsersThisMonth: 0,
+    newJobsThisMonth: 0,
+    activeApplications: 0,
+    totalRevenue: '$0',
+    conversionRate: '0%',
+    averageTimeToHire: '0 days',
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Reports & Analytics</h1>
-        <p className="text-muted-foreground">Platform statistics and insights</p>
+        <h1 className="text-3xl font-bold">Reports & Analytics</h1>
+        <p className="text-muted-foreground mt-2">Platform statistics and insights</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-6">
             <p className="text-sm text-muted-foreground mb-1">New Users This Month</p>
@@ -69,18 +68,18 @@ export default function AdminReportsPage() {
           <CardTitle>Platform Overview</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Total Users</p>
-              <p className="text-2xl font-bold">{mockJobSeekers.length + 5}</p>
+              <p className="text-2xl font-bold">0</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">Total Companies</p>
-              <p className="text-2xl font-bold">{mockCompanies.length}</p>
+              <p className="text-2xl font-bold">0</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">Total Vacancies</p>
-              <p className="text-2xl font-bold">{mockVacancies.length}</p>
+              <p className="text-2xl font-bold">0</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">Avg. Rating</p>
@@ -92,7 +91,7 @@ export default function AdminReportsPage() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">Active Sessions</p>
-              <p className="text-2xl font-bold">542</p>
+              <p className="text-2xl font-bold">0</p>
             </div>
           </div>
         </CardContent>

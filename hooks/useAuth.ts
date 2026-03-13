@@ -2,62 +2,44 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { User, AuthToken, UserRole } from '@/lib/types'
-
-// Mock auth data - in production this would come from a backend
-const MOCK_USERS: Record<string, { user: User; password: string }> = {
-  'seeker@example.com': {
-    user: {
-      id: 'user-1',
-      email: 'seeker@example.com',
-      password: 'password123', // This would be hashed
-      role: 'job_seeker',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    password: 'password123',
-  },
-  'employer@example.com': {
-    user: {
-      id: 'user-2',
-      email: 'employer@example.com',
-      password: 'password123',
-      role: 'employer',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    password: 'password123',
-  },
-  'admin@example.com': {
-    user: {
-      id: 'user-3',
-      email: 'admin@example.com',
-      password: 'password123',
-      role: 'admin',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    password: 'password123',
-  },
-}
+import { loginUser, registerUser, logoutUser } from '@/lib/api-client'
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<AuthToken | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
 
-  // Load auth from localStorage on mount
+  // Restore auth from localStorage and check token expiry on mount
   useEffect(() => {
-    const savedAuth = localStorage.getItem('auth')
-    if (savedAuth) {
+    const restoreAuth = () => {
       try {
-        const { user: savedUser, token: savedToken } = JSON.parse(savedAuth)
-        setUser(savedUser)
-        setToken(savedToken)
+        const savedAuth = localStorage.getItem('auth')
+        if (savedAuth) {
+          const auth = JSON.parse(savedAuth)
+          const { user: savedUser, access_token, refresh_token, expires_at } = auth
+
+          // Check if token is expired
+          if (expires_at && expires_at < Date.now()) {
+            // Token expired, clear auth
+            localStorage.removeItem('auth')
+            setIsInitialized(true)
+            return
+          }
+
+          setUser(savedUser)
+          setToken({ access_token, refresh_token, expires_in: 0 })
+        }
       } catch (err) {
+        console.error('[Auth] Failed to restore auth:', err)
         localStorage.removeItem('auth')
+      } finally {
+        setIsInitialized(true)
       }
     }
+
+    restoreAuth()
   }, [])
 
   const login = useCallback(
@@ -65,35 +47,24 @@ export function useAuth() {
       setIsLoading(true)
       setError(null)
       try {
-        // Mock authentication
-        const userEntry = MOCK_USERS[email]
-        if (!userEntry || userEntry.password !== password) {
-          throw new Error('Invalid credentials')
-        }
+        const response = await loginUser({ email, password, role })
+        const { user: apiUser, token: apiToken } = response
 
-        if (userEntry.user.role !== role) {
-          throw new Error(`User is not a ${role}`)
-        }
-
-        const mockToken: AuthToken = {
-          access_token: 'mock-token-' + Date.now(),
-          refresh_token: 'mock-refresh-' + Date.now(),
-          expires_in: 86400,
-        }
-
-        setUser(userEntry.user)
-        setToken(mockToken)
-
-        // Save to localStorage
+        // Store auth in localStorage
         localStorage.setItem(
           'auth',
           JSON.stringify({
-            user: userEntry.user,
-            token: mockToken,
+            user: apiUser,
+            access_token: apiToken.access_token,
+            refresh_token: apiToken.refresh_token,
+            expires_at: Date.now() + apiToken.expires_in * 1000,
           })
         )
 
-        return { user: userEntry.user, token: mockToken }
+        setUser(apiUser)
+        setToken(apiToken)
+
+        return { user: apiUser, token: apiToken }
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Login failed'
         setError(message)
@@ -117,39 +88,31 @@ export function useAuth() {
       setIsLoading(true)
       setError(null)
       try {
-        if (MOCK_USERS[email]) {
-          throw new Error('Email already registered')
-        }
-
-        const newUser: User = {
-          id: 'user-' + Date.now(),
+        const response = await registerUser({
           email,
-          password, // This would be hashed in production
+          password,
+          first_name,
+          last_name,
           role,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }
+          phone,
+        })
+        const { user: apiUser, token: apiToken } = response
 
-        MOCK_USERS[email] = { user: newUser, password }
-
-        const mockToken: AuthToken = {
-          access_token: 'mock-token-' + Date.now(),
-          refresh_token: 'mock-refresh-' + Date.now(),
-          expires_in: 86400,
-        }
-
-        setUser(newUser)
-        setToken(mockToken)
-
+        // Store auth in localStorage
         localStorage.setItem(
           'auth',
           JSON.stringify({
-            user: newUser,
-            token: mockToken,
+            user: apiUser,
+            access_token: apiToken.access_token,
+            refresh_token: apiToken.refresh_token,
+            expires_at: Date.now() + apiToken.expires_in * 1000,
           })
         )
 
-        return { user: newUser, token: mockToken }
+        setUser(apiUser)
+        setToken(apiToken)
+
+        return { user: apiUser, token: apiToken }
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Registration failed'
         setError(message)
@@ -162,10 +125,16 @@ export function useAuth() {
   )
 
   const logout = useCallback(async () => {
-    setUser(null)
-    setToken(null)
-    setError(null)
-    localStorage.removeItem('auth')
+    try {
+      await logoutUser()
+    } catch (err) {
+      console.error('[Auth] Logout error:', err)
+    } finally {
+      setUser(null)
+      setToken(null)
+      setError(null)
+      localStorage.removeItem('auth')
+    }
   }, [])
 
   const isAuthenticated = !!user && !!token
@@ -177,6 +146,7 @@ export function useAuth() {
     isLoading,
     error,
     isAuthenticated,
+    isInitialized,
     userRole,
     login,
     register,

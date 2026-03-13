@@ -5,17 +5,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { mockCompanies } from '@/lib/mock-data'
 
 export default function CompanyProfilePage() {
-  const company = mockCompanies[0]
   const [formData, setFormData] = useState({
-    name: company.name,
-    description: company.description || '',
-    website: company.website || '',
-    location: company.location || '',
-    industry: company.industry || '',
-    employee_count: company.employee_count?.toString() || '',
+    name: '',
+    description: '',
+    website: '',
+    location: '',
+    industry: '',
+    employee_count: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

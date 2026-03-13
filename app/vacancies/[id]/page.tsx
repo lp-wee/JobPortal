@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
@@ -24,8 +24,10 @@ import {
   Loader2
 } from 'lucide-react'
 
-export default function VacancyDetailPage({ params }: { params: { id: string } }) {
+export default function VacancyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
+  const resolvedParams = use(params)
+  const id = resolvedParams.id
   const { user, isAuthenticated, userRole } = useAuth()
   const [vacancy, setVacancy] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -33,9 +35,10 @@ export default function VacancyDetailPage({ params }: { params: { id: string } }
   const [applied, setApplied] = useState(false)
 
   useEffect(() => {
+    if (!id || id === 'undefined') return
     const load = async () => {
       try {
-        const data = await fetchVacancy(params.id)
+        const data = await fetchVacancy(id)
         setVacancy(data)
       } catch (e) {
         console.error(e)
@@ -44,7 +47,7 @@ export default function VacancyDetailPage({ params }: { params: { id: string } }
       }
     }
     load()
-  }, [params.id])
+  }, [id])
 
   const handleApply = async () => {
     if (!isAuthenticated) {
@@ -60,7 +63,7 @@ export default function VacancyDetailPage({ params }: { params: { id: string } }
     try {
       // Assuming user has a default job_seeker_id and resume_id for demo
       await createApplication({
-        vacancy_id: parseInt(params.id),
+        vacancy_id: parseInt(id),
         job_seeker_id: 1, // Mock ID
         cover_letter: 'Интересует данная вакансия'
       })

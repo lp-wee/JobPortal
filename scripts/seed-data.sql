@@ -7,23 +7,23 @@ TRUNCATE TABLE users, companies, job_seekers, vacancies, resumes, applications, 
 
 -- Admin user
 INSERT INTO users (email, password_hash, role, first_name, last_name) VALUES
-('admin@jobportal.com', 'hashed_password_123', 'admin', 'Admin', 'User');
+('admin@jobportal.com', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'admin', 'Admin', 'User');
 
 -- Company users (employers)
 INSERT INTO users (email, password_hash, role, first_name, last_name, phone) VALUES
-('tech@techcorp.com', 'hashed_password_123', 'employer', 'John', 'Smith', '+1-555-0101'),
-('cloud@cloudbase.io', 'hashed_password_123', 'employer', 'Sarah', 'Johnson', '+1-555-0102'),
-('data@datavision.ai', 'hashed_password_123', 'employer', 'Michael', 'Chen', '+1-555-0103'),
-('secure@securenet.com', 'hashed_password_123', 'employer', 'Emma', 'Brown', '+1-555-0104'),
-('design@designstudio.co', 'hashed_password_123', 'employer', 'David', 'Wilson', '+1-555-0105');
+('tech@techcorp.com', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'employer', 'John', 'Smith', '+1-555-0101'),
+('cloud@cloudbase.io', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'employer', 'Sarah', 'Johnson', '+1-555-0102'),
+('data@datavision.ai', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'employer', 'Michael', 'Chen', '+1-555-0103'),
+('secure@securenet.com', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'employer', 'Emma', 'Brown', '+1-555-0104'),
+('design@designstudio.co', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'employer', 'David', 'Wilson', '+1-555-0105');
 
 -- Job seeker users
 INSERT INTO users (email, password_hash, role, first_name, last_name, phone) VALUES
-('alice@gmail.com', 'hashed_password_123', 'job_seeker', 'Alice', 'Thompson', '+1-555-0201'),
-('bob@gmail.com', 'hashed_password_123', 'job_seeker', 'Bob', 'Martinez', '+1-555-0202'),
-('carol@gmail.com', 'hashed_password_123', 'job_seeker', 'Carol', 'Anderson', '+1-555-0203'),
-('david@gmail.com', 'hashed_password_123', 'job_seeker', 'David', 'Taylor', '+1-555-0204'),
-('emma@gmail.com', 'hashed_password_123', 'job_seeker', 'Emma', 'Davis', '+1-555-0205');
+('alice@gmail.com', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'job_seeker', 'Alice', 'Thompson', '+1-555-0201'),
+('bob@gmail.com', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'job_seeker', 'Bob', 'Martinez', '+1-555-0202'),
+('carol@gmail.com', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'job_seeker', 'Carol', 'Anderson', '+1-555-0203'),
+('david@gmail.com', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'job_seeker', 'David', 'Taylor', '+1-555-0204'),
+('emma@gmail.com', '$2y$10$5778Z2rM4clTrrVCq7QiD.zg8Ijq3UFjtTmkttkqH6OzpvpW3YYKe', 'job_seeker', 'Emma', 'Davis', '+1-555-0205');
 
 -- ==================== COMPANIES ====================
 

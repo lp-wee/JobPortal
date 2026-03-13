@@ -3,24 +3,20 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { mockVacancies, mockApplications } from '@/lib/mock-data'
 import { ROUTES } from '@/lib/utils/constants'
-import { Briefcase, Send, Users, TrendingUp, Plus, Eye } from 'lucide-react'
+import { Briefcase, Send, Users, TrendingUp, Plus } from 'lucide-react'
 
 export default function EmployerDashboardPage() {
-  const companyVacancies = mockVacancies.filter((v) => v.company_id === 'company-1')
-  const vacancyApplications = mockApplications.filter((a) =>
-    companyVacancies.some((v) => v.id === a.vacancy_id)
-  )
+  const companyVacancies: any[] = []
+  const vacancyApplications: any[] = []
 
   const applicationStats = {
-    pending: vacancyApplications.filter((a) => a.status === 'pending').length,
-    reviewing: vacancyApplications.filter((a) => a.status === 'reviewing').length,
-    accepted: vacancyApplications.filter((a) => a.status === 'accepted').length,
+    pending: 0,
+    reviewing: 0,
+    accepted: 0,
   }
 
-  const totalViews = companyVacancies.reduce((sum, v) => sum + v.views_count, 0)
+  const totalViews = 0
 
   return (
     <div className="space-y-8">
