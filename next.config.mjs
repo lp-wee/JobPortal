@@ -3,7 +3,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  allowedDevOrigins: ['*'],
+  allowedDevOrigins: ['*', '*.replit.dev', '*.janeway.replit.dev'],
   experimental: {
     serverActions: {
       allowedOrigins: ['*'],
