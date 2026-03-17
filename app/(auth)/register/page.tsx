@@ -76,7 +76,7 @@ export default function RegisterPage() {
           formData.phone || undefined
         )
       }
-      const redirectUrl = formData.role === 'job_seeker' ? ROUTES.CABINET_DASHBOARD : ROUTES.EMPLOYER_DASHBOARD
+      const redirectUrl = formData.role === 'employer' ? ROUTES.EMPLOYER_DASHBOARD : ROUTES.CABINET_DASHBOARD
       router.push(redirectUrl)
     } catch (err) {
       console.error('[Register] Error:', err)

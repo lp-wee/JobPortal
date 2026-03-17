@@ -35,24 +35,22 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await login(formData.email, formData.password, formData.role)
-      const redirectUrl = formData.role === 'job_seeker' ? ROUTES.CABINET_DASHBOARD : ROUTES.EMPLOYER_DASHBOARD
+      const result = await login(formData.email, formData.password, formData.role)
+      const redirectUrl = result.user.role === 'employer' ? ROUTES.EMPLOYER_DASHBOARD : ROUTES.CABINET_DASHBOARD
       router.push(redirectUrl)
     } catch (err) {
       console.error('[Login] Error:', err)
-      // Error is handled by useAuth hook and displayed in UI
     }
   }
 
   const quickLogin = async (account: (typeof DEMO_ACCOUNTS)[0]) => {
     setFormData({ email: account.email, password: account.password, role: account.role })
     try {
-      await login(account.email, account.password, account.role)
-      const redirectUrl = account.role === 'job_seeker' ? ROUTES.CABINET_DASHBOARD : ROUTES.EMPLOYER_DASHBOARD
+      const result = await login(account.email, account.password, account.role)
+      const redirectUrl = result.user.role === 'employer' ? ROUTES.EMPLOYER_DASHBOARD : ROUTES.CABINET_DASHBOARD
       router.push(redirectUrl)
     } catch (err) {
       console.error('[Demo Login] Error:', err)
-      // Error is handled by useAuth hook and displayed in UI
     }
   }
 
