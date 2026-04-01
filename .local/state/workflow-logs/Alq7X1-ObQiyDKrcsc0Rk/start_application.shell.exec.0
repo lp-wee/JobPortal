@@ -1,0 +1,49 @@
+
+> my-project@0.1.0 dev
+> concurrently "next dev --turbo -p 5000 -H 0.0.0.0" "tsx watch server/index.ts"
+
+[1G[0K[0m[0][0m [1m[38;2;173;127;168m▲ Next.js 16.1.6[39m[22m (Turbopack)
+[0m[0][0m - Local:         http://localhost:5000
+[0m[0][0m - Network:       http://0.0.0.0:5000
+[0m[0][0m - Environments: .env
+[0m[0][0m - Experiments (use with caution):
+[0m[0][0m   · serverActions
+[0m[0][0m 
+[0m[0][0m [32m[1m✓[22m[39m Starting...
+[0m[1][0m [dotenv@17.3.1] injecting env (3) from .env -- tip: ⚡️ secrets for agents: https://dotenvx.com/as2
+[0m[1][0m [API Server] ✓ Running on http://localhost:3001
+[0m[1][0m [API Server] ✓ Environment: development
+[0m[1][0m [API Server] ✓ Database: configured
+[0m[1][0m [API Server] ✓ Health check: http://localhost:3001/api/health
+[0m[0][0m [32m[1m✓[22m[39m Ready in 465ms
+[0m[0][0m  GET / [32m200[39m in 1177ms[2m (compile: 960ms, render: 217ms)[22m
+[0m[0][0m  GET / [32m200[39m in 1198ms[2m (compile: 1009ms, render: 189ms)[22m
+[0m[0][0m  GET / [32m200[39m in 79ms[2m (compile: 3ms, render: 76ms)[22m
+[0m[1][0m [2026-03-17T04:23:26.270Z] GET /api/vacancies
+[0m[0][0m [33m[1m⚠[22m[39m Blocked cross-origin request from 2868c5bf-89a3-4f70-ac01-807dcdef5946-00-2vkjt9g3v40wu.janeway.replit.dev to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[0m[0][0m Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[0m[0][0m  GET /companies [32m200[39m in 559ms[2m (compile: 534ms, render: 24ms)[22m
+[0m[0][0m  GET /services [32m200[39m in 314ms[2m (compile: 297ms, render: 17ms)[22m
+[0m[0][0m  GET /services [32m200[39m in 19ms[2m (compile: 3ms, render: 15ms)[22m
+[0m[0][0m  GET /companies [32m200[39m in 18ms[2m (compile: 2ms, render: 15ms)[22m
+[0m[0][0m  GET / [32m200[39m in 15ms[2m (compile: 3ms, render: 12ms)[22m
+[0m[0][0m  GET /login [32m200[39m in 445ms[2m (compile: 406ms, render: 39ms)[22m
+[0m[0][0m  GET /register [32m200[39m in 279ms[2m (compile: 261ms, render: 18ms)[22m
+[0m[0][0m  GET /login [32m200[39m in 19ms[2m (compile: 2ms, render: 17ms)[22m
+[0m[0][0m  GET / [32m200[39m in 99ms[2m (compile: 70ms, render: 29ms)[22m
+[0m[0][0m  GET / [32m200[39m in 13ms[2m (compile: 2ms, render: 10ms)[22m
+[0m[0][0m  GET / [32m200[39m in 15ms[2m (compile: 2ms, render: 12ms)[22m
+[0m[0][0m  GET / [32m200[39m in 13ms[2m (compile: 1923µs, render: 11ms)[22m
+[0m[0][0m [33m[1m⚠[22m[39m Found a change in next.config.mjs. Restarting the server to apply the changes...
+[0m[0][0m [1m[38;2;173;127;168m▲ Next.js 16.1.6[39m[22m (Turbopack)
+[0m[0][0m - Local:         http://localhost:5000
+[0m[0][0m - Network:       http://0.0.0.0:5000
+[0m[0][0m - Environments: .env
+[0m[0][0m - Experiments (use with caution):
+[0m[0][0m   · serverActions
+[0m[0][0m 
+[0m[0][0m [32m[1m✓[22m[39m Starting...
+[0m[0][0m [32m[1m✓[22m[39m Ready in 438ms
+[0m[0][0m  GET / [32m200[39m in 1138ms[2m (compile: 956ms, render: 182ms)[22m
+[0m[1][0m [0mtsx watch server/index.ts exited with code SIGHUP[0m
+[0m[0][0m [0mnext dev --turbo -p 5000 -H 0.0.0.0 exited with code SIGHUP[0m

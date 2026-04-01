@@ -1,0 +1,30 @@
+[1G[0K⠙[1G[0K
+> my-project@0.1.0 dev
+> concurrently "next dev --turbo -p 5000 -H 0.0.0.0" "tsx watch server/index.ts"
+
+[1G[0K⠙[1G[0K[0m[1][0m [dotenv@17.3.1] injecting env (3) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+[0m[1][0m [API Server] ✓ Running on http://localhost:3001
+[0m[1][0m [API Server] ✓ Environment: development
+[0m[1][0m [API Server] ✓ Database: configured
+[0m[1][0m [API Server] ✓ Health check: http://localhost:3001/api/health
+[0m[0][0m [1m[38;2;173;127;168m▲ Next.js 16.1.6[39m[22m (Turbopack)
+[0m[0][0m - Local:         http://localhost:5000
+[0m[0][0m - Network:       http://0.0.0.0:5000
+[0m[0][0m - Environments: .env
+[0m[0][0m - Experiments (use with caution):
+[0m[0][0m   · serverActions
+[0m[0][0m 
+[0m[0][0m [32m[1m✓[22m[39m Starting...
+[0m[0][0m [32m[1m✓[22m[39m Ready in 4.6s
+[0m[0][0m  GET / [32m200[39m in 2.4s[2m (compile: 2.2s, render: 175ms)[22m
+[0m[1][0m [2026-03-31T13:15:34.515Z] GET /api/vacancies
+[0m[0][0m  GET /vacancies/1 [32m200[39m in 485ms[2m (compile: 457ms, render: 28ms)[22m
+[0m[1][0m [2026-03-31T13:15:38.091Z] GET /api/vacancies/1
+[0m[1][0m [2026-03-31T13:15:38.297Z] GET /api/vacancies/1
+[0m[0][0m  GET /companies [32m200[39m in 72ms[2m (compile: 57ms, render: 15ms)[22m
+[0m[1][0m [2026-03-31T13:15:42.488Z] GET /api/vacancies
+[0m[1][0m [2026-03-31T13:15:42.684Z] GET /api/vacancies
+[0m[0][0m  GET /services [32m200[39m in 59ms[2m (compile: 45ms, render: 14ms)[22m
+[0m[0][0m  GET /vacancies [32m200[39m in 71ms[2m (compile: 52ms, render: 19ms)[22m
+[0m[1][0m [2026-03-31T13:15:47.085Z] GET /api/vacancies
+[0m[1][0m [2026-03-31T13:15:47.299Z] GET /api/vacancies
