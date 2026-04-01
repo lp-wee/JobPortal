@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuth } from '@/hooks/useAuth'
 import { ROUTES } from '@/lib/utils/constants'
-import { fetchVacancy, createApplication } from '@/lib/api-client'
+import { fetchVacancy, createApplication, checkApplicationStatus } from '@/lib/api-client'
 import {
   MapPin,
   Briefcase,
@@ -49,6 +49,15 @@ export default function VacancyDetailPage({ params }: { params: Promise<{ id: st
     }
     load()
   }, [id])
+
+  useEffect(() => {
+    if (!isAuthenticated || userRole !== 'job_seeker' || !id || id === 'undefined') return
+    checkApplicationStatus(parseInt(id))
+      .then((result: any) => {
+        if (result?.applied) setApplied(true)
+      })
+      .catch(() => {})
+  }, [isAuthenticated, userRole, id])
 
   const handleApply = async () => {
     if (!isAuthenticated) {

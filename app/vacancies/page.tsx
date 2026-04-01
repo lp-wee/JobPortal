@@ -11,14 +11,17 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { ROUTES } from '@/lib/utils/constants'
-import { fetchVacancies } from '@/lib/api-client'
-import { MapPin, Search, Filter, Loader2, Briefcase, ChevronRight } from 'lucide-react'
+import { fetchVacancies, fetchApplications } from '@/lib/api-client'
+import { useAuth } from '@/hooks/useAuth'
+import { MapPin, Search, Filter, Loader2, Briefcase, ChevronRight, CheckCircle2 } from 'lucide-react'
 
 export default function SearchPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { isAuthenticated, userRole } = useAuth()
   
   const [vacancies, setVacancies] = useState<any[]>([])
+  const [appliedVacancyIds, setAppliedVacancyIds] = useState<Set<number>>(new Set())
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '')
   
@@ -45,6 +48,16 @@ export default function SearchPage() {
       setLoading(false)
     }
   }, [searchParams])
+
+  useEffect(() => {
+    if (isAuthenticated && userRole === 'job_seeker') {
+      fetchApplications()
+        .then((apps) => {
+          setAppliedVacancyIds(new Set(apps.map((a: any) => a.vacancy_id)))
+        })
+        .catch(() => {})
+    }
+  }, [isAuthenticated, userRole])
 
   useEffect(() => {
     loadVacancies()
@@ -211,11 +224,18 @@ export default function SearchPage() {
                         </div>
 
                         <div className="flex items-center gap-2 md:gap-4 mt-3 md:mt-0">
-                          <Button variant="ghost" className="rounded-xl font-black text-primary group-hover:bg-primary/5 transition-all text-sm md:text-base px-2 md:px-4">
-                            <span className="hidden sm:inline">ОТКЛИКНУТЬСЯ</span>
-                            <span className="sm:hidden">ОТКЛИК</span>
-                            <ChevronRight className="ml-1 w-3 md:w-4 h-3 md:h-4" />
-                          </Button>
+                          {appliedVacancyIds.has(vacancy.id) ? (
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 rounded-xl text-sm font-bold border border-green-100">
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span className="hidden sm:inline">Откликнулись</span>
+                            </div>
+                          ) : (
+                            <Button variant="ghost" className="rounded-xl font-black text-primary group-hover:bg-primary/5 transition-all text-sm md:text-base px-2 md:px-4">
+                              <span className="hidden sm:inline">ОТКЛИКНУТЬСЯ</span>
+                              <span className="sm:hidden">ОТКЛИК</span>
+                              <ChevronRight className="ml-1 w-3 md:w-4 h-3 md:h-4" />
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>

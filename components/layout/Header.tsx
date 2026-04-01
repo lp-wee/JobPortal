@@ -98,7 +98,13 @@ export function Header() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="gap-2 hover:bg-gray-50 rounded-xl px-2">
-                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-xs font-black text-primary">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ring-2 ${
+                        user?.role === 'admin'
+                          ? 'bg-purple-100 text-purple-700 ring-purple-400'
+                          : user?.role === 'employer'
+                          ? 'bg-blue-100 text-blue-700 ring-blue-400'
+                          : 'bg-green-100 text-green-700 ring-green-400'
+                      }`}>
                         {avatarLetter}
                       </div>
                       <span className="hidden sm:inline text-sm font-bold text-gray-700 max-w-[140px] truncate">{displayName}</span>

@@ -1018,6 +1018,162 @@ app.get('/api/companies', async (req: Request, res: Response) => {
   }
 })
 
+// ==================== ADMIN ROUTES ====================
+
+// Get admin statistics
+app.get('/api/admin/stats', authenticateToken, authorizeRoles('admin'), async (req: AuthRequest, res: Response) => {
+  try {
+    const [usersResult, companiesResult, vacanciesResult, applicationsResult] = await Promise.all([
+      pool.query('SELECT COUNT(*) as count FROM users'),
+      pool.query('SELECT COUNT(*) as count FROM companies'),
+      pool.query('SELECT COUNT(*) as count FROM vacancies'),
+      pool.query('SELECT COUNT(*) as count FROM applications'),
+    ])
+
+    res.json({
+      totalUsers: parseInt(usersResult.rows[0].count),
+      totalCompanies: parseInt(companiesResult.rows[0].count),
+      totalVacancies: parseInt(vacanciesResult.rows[0].count),
+      totalApplications: parseInt(applicationsResult.rows[0].count),
+    })
+  } catch (error: any) {
+    console.error('Error fetching admin stats:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Get all users (admin only)
+app.get('/api/admin/users', authenticateToken, authorizeRoles('admin'), async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await pool.query(
+      `SELECT u.id, u.email, u.first_name, u.last_name, u.role, u.created_at, u.phone
+       FROM users u ORDER BY u.created_at DESC`
+    )
+    res.json(result.rows)
+  } catch (error: any) {
+    console.error('Error fetching users:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Delete user (admin only)
+app.delete('/api/admin/users/:id', authenticateToken, authorizeRoles('admin'), async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params
+    await pool.query('DELETE FROM users WHERE id = $1', [id])
+    res.json({ message: 'User deleted successfully' })
+  } catch (error: any) {
+    console.error('Error deleting user:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Get all vacancies (admin only)
+app.get('/api/admin/vacancies', authenticateToken, authorizeRoles('admin'), async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await pool.query(
+      `SELECT v.*, c.name as company_name
+       FROM vacancies v JOIN companies c ON v.company_id = c.id
+       ORDER BY v.created_at DESC`
+    )
+    res.json(result.rows)
+  } catch (error: any) {
+    console.error('Error fetching admin vacancies:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Toggle vacancy status (admin only)
+app.put('/api/admin/vacancies/:id', authenticateToken, authorizeRoles('admin'), async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params
+    const { is_active } = req.body
+    const result = await pool.query(
+      'UPDATE vacancies SET is_active = $1 WHERE id = $2 RETURNING *',
+      [is_active, id]
+    )
+    res.json(result.rows[0])
+  } catch (error: any) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Check if current job seeker has applied to a vacancy
+app.get('/api/applications/check/:vacancyId', authenticateToken, authorizeRoles('job_seeker'), async (req: AuthRequest, res: Response) => {
+  try {
+    const { vacancyId } = req.params
+    const result = await pool.query(
+      `SELECT a.id, a.status FROM applications a
+       JOIN job_seekers js ON a.job_seeker_id = js.id
+       WHERE js.user_id = $1 AND a.vacancy_id = $2`,
+      [req.user?.id, vacancyId]
+    )
+    if (result.rows.length > 0) {
+      res.json({ applied: true, status: result.rows[0].status, application_id: result.rows[0].id })
+    } else {
+      res.json({ applied: false })
+    }
+  } catch (error: any) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Get conversation between current user and another user
+app.get('/api/messages/conversation/:userId', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { userId } = req.params
+    const result = await pool.query(
+      `SELECT m.*,
+              sender.first_name as sender_first_name, sender.last_name as sender_last_name,
+              recipient.first_name as recipient_first_name, recipient.last_name as recipient_last_name
+       FROM messages m
+       JOIN users sender ON m.sender_id = sender.id
+       JOIN users recipient ON m.recipient_id = recipient.id
+       WHERE (m.sender_id = $1 AND m.recipient_id = $2) OR (m.sender_id = $2 AND m.recipient_id = $1)
+       ORDER BY m.created_at ASC`,
+      [req.user?.id, userId]
+    )
+    res.json(result.rows)
+  } catch (error: any) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Get list of conversation partners
+app.get('/api/messages/contacts', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await pool.query(
+      `SELECT DISTINCT ON (partner_id) partner_id,
+              partner_name, partner_role, last_message, last_time, unread_count
+       FROM (
+         SELECT 
+           CASE WHEN m.sender_id = $1 THEN m.recipient_id ELSE m.sender_id END as partner_id,
+           CASE WHEN m.sender_id = $1 
+             THEN (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE id = m.recipient_id)
+             ELSE (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE id = m.sender_id)
+           END as partner_name,
+           CASE WHEN m.sender_id = $1
+             THEN (SELECT role FROM users WHERE id = m.recipient_id)
+             ELSE (SELECT role FROM users WHERE id = m.sender_id)
+           END as partner_role,
+           m.content as last_message,
+           m.created_at as last_time,
+           (SELECT COUNT(*) FROM messages WHERE sender_id != $1 AND recipient_id = $1 
+            AND sender_id = CASE WHEN m.sender_id = $1 THEN m.recipient_id ELSE m.sender_id END
+            AND is_read = false) as unread_count
+         FROM messages m
+         WHERE m.sender_id = $1 OR m.recipient_id = $1
+         ORDER BY m.created_at DESC
+       ) sub
+       ORDER BY partner_id, last_time DESC`,
+      [req.user?.id]
+    )
+    res.json(result.rows)
+  } catch (error: any) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
 // ==================== MESSAGES ROUTES ====================
 
 // Get messages for current user (both sent and received)

@@ -265,6 +265,43 @@ export async function fetchAllCompanies() {
   return apiFetch('/companies')
 }
 
+// ==================== ADMIN ====================
+
+export async function fetchAdminStats() {
+  return apiFetch('/admin/stats')
+}
+
+export async function fetchAdminUsers() {
+  return apiFetch('/admin/users')
+}
+
+export async function deleteAdminUser(id: number) {
+  return apiFetch(`/admin/users/${id}`, { method: 'DELETE' })
+}
+
+export async function fetchAdminVacancies() {
+  return apiFetch('/admin/vacancies')
+}
+
+export async function toggleAdminVacancy(id: number, is_active: boolean) {
+  return apiFetch(`/admin/vacancies/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ is_active }),
+  })
+}
+
+export async function checkApplicationStatus(vacancyId: number) {
+  return apiFetch(`/applications/check/${vacancyId}`, { skipErrorHandling: true })
+}
+
+export async function fetchConversation(userId: number) {
+  return apiFetch(`/messages/conversation/${userId}`)
+}
+
+export async function fetchMessageContacts() {
+  return apiFetch('/messages/contacts')
+}
+
 // ==================== HEALTH CHECK ====================
 
 export async function checkAPIHealth() {
