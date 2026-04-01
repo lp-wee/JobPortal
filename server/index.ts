@@ -612,11 +612,18 @@ app.put('/api/vacancies/:id', authenticateToken, authorizeRoles('employer'), asy
 
     const result = await pool.query(
       `UPDATE vacancies 
-       SET title = $1, description = $2, salary_min = $3, salary_max = $4, 
-           employment_type = $5, experience_level = $6, location = $7, is_active = $8, updated_at = CURRENT_TIMESTAMP
+       SET title = COALESCE($1, title),
+           description = COALESCE($2, description),
+           salary_min = COALESCE($3, salary_min),
+           salary_max = COALESCE($4, salary_max),
+           employment_type = COALESCE($5, employment_type),
+           experience_level = COALESCE($6, experience_level),
+           location = COALESCE($7, location),
+           is_active = COALESCE($8, is_active),
+           updated_at = CURRENT_TIMESTAMP
        WHERE id = $9 AND company_id = $10
        RETURNING *`,
-      [title, description, salary_min, salary_max, employment_type, experience_level, location, is_active, id, company_id]
+      [title ?? null, description ?? null, salary_min ?? null, salary_max ?? null, employment_type ?? null, experience_level ?? null, location ?? null, is_active ?? null, id, company_id]
     )
 
     if (result.rows.length === 0) {
